@@ -1,28 +1,97 @@
-// array de datos en el archivo data.js   ==>   data.events[]
+// array de DATOS en el archivo data.js   ==>   data.events[]
 const events = data.events
-console.log(events)
+//console.log(events)
 
-// capturo la FECHA ACTUAL
+
+// capturo la FECHA ACTUAL   ===========================================================================================================
 const fecha = new Date
 const hoy = fecha.getDate()
 const mes = fecha.getMonth() + 1
-console.log(mes, hoy)
+console.log('mes:', mes, '- dia:', hoy)
 
-// capturo al contenedor de EVENTOS del DOM
-let eventosDOM = document.getElementById("eventos")
+// creo un ARRAY con los DATOS de los EVENTOS FUTUROS
+const pastEvents = []
 
-// recorro el ARRAY de datos
 for (let evento of events) {
 
     let mesEvento = parseInt(evento.date[5] + evento.date[6])
     let diaEvento = parseInt(evento.date[8] + evento.date[9])
-    
 
     if (mesEvento < mes || (mesEvento == mes && diaEvento <= hoy)) {
+        pastEvents.push(evento)
+    }
+}
+console.log(pastEvents)
 
-        console.log(evento.date, mesEvento, diaEvento)
 
-        // creo una CARD 
+
+// array de CATEGORIAS   =========================================================================================================================
+let categories = []
+let catChecked = []
+let catCheckedEvents = []
+
+
+
+// FUNCIONES   ==================================================================================================================================
+function categorias(eventos) {
+    eventos.forEach(element => {
+        if (categories.some(category => category == element.category)) {
+            //console.log("categoria existente")
+        }
+        else {
+            categories.push(element.category)
+        }
+    });
+    console.log('categorias:', categories)
+
+    // capturo al contenedor de CATEGORIAS del DOM
+    let categoriasDOM = document.getElementById("category")
+
+    // recorro el array de categorias
+    for (let category of categories) {
+
+        // creo una CATEGORIA
+        let categoria = document.createElement("div")
+        categoria.setAttribute("class", "form-check")
+
+        // INPUT de la categoria
+        let input = document.createElement("input")
+        input.setAttribute("class", "form-check-input")
+        input.setAttribute("type", "checkbox")
+        input.setAttribute("value", category)
+        input.setAttribute("id", category)
+        input.addEventListener('click', checked)
+        categoria.appendChild(input)
+
+        // LABEL de la categoria
+        let label = document.createElement("label")
+        label.setAttribute("class", "form-check-label")
+        label.setAttribute("for", category)
+        label.innerHTML = category
+        categoria.appendChild(label)
+
+        //console.log(categoria)
+
+        // agrego la categoria al contenedor
+        categoriasDOM.appendChild(categoria)
+
+    }
+
+}
+
+function unchecked() {
+     console.log(categorias)
+}
+
+function cards(eventos) {
+
+    // capturo al contenedor de EVENTOS del DOM   ====================================================================================================
+    let eventosDOM = document.getElementById("eventos")
+
+    // recorro el ARRAY de datos
+    for (let evento of eventos) {
+
+        // creo una CARD
         let card = document.createElement("div")
         card.setAttribute("class", "card")
         card.style.width = "18rem"
@@ -66,7 +135,7 @@ for (let evento of events) {
         let colBoton = document.createElement("div")
         colBoton.setAttribute("class", "col")
         let boton = document.createElement("a")
-        boton.setAttribute("href", "./evento.html")
+        boton.setAttribute("href", `./evento.html?id=${evento._id}`)
         boton.setAttribute("class", "btn btn-light")
         boton.innerHTML = "see more"
         colBoton.appendChild(boton)
@@ -75,22 +144,136 @@ for (let evento of events) {
         // agrego la CARD al contenedor
         eventosDOM.appendChild(card)
 
+    }
+
+}
+
+function borrarCards() {
+    let main = document.getElementById("main")
+    //console.log(main)
+    let eventos = document.getElementById("eventos")
+    //console.log(eventos)
+    main.removeChild(eventos)
+    let div = document.createElement("div")
+    div.setAttribute("class", "eventos")
+    div.setAttribute("id", "eventos")
+    main.appendChild(div)
+    //console.log(main)
+}
+
+function checked(e) {
+
+    // borro las cards del DOM
+    borrarCards()
+
+    // categorias CHECKEADAS
+    if (catChecked.length == 0) {
+        //console.log('if linea 28')
+        catCheckedEvents = []
 
     }
+
+    //console.log(e.target.value)
+    if (e.target.checked) {
+        catChecked.push(e.target.value)
+        //console.log('checked:', catChecked)
+        for (let evento of pastEvents) {
+            if (evento.category == e.target.value) {
+                catCheckedEvents.push(evento)
+
+            }
+        }
+    } else {
+        //console.log('quitar', e.target.value)
+        catChecked = catChecked.filter(elemento => elemento != e.target.value)
+        catCheckedEvents = catCheckedEvents.filter(evento => evento.category != e.target.value)
+
+        if (catChecked.length == 0) {
+            //catCheckedEvents = pastEvents
+            location.reload()
+        }
+        //console.log('checked:', catChecked)
+    }
+    console.log('catCheckedEvents:', catCheckedEvents)
+    console.log('catChecked:', catChecked)
+
+
+    // agrego las CARDS de las categorias checkeadas
+    cards(catCheckedEvents)
+
+
+}
+
+function buscar(e) {
+    e.preventDefault()                   // cancelo el evento (envio de datos del formulario)
+    console.log("texto a buscar:", textoAbuscar.value)
+
+    if (textoAbuscar.value == "") {
+        location.reload()
+        // borrarCards()
+        // textoAbuscar.value = ""
+        // cards(pastEvents)
+    } else {
+        let respuesta = 'no'
+        let encontrados = []
+
+        if (catCheckedEvents.length == 0) {
+            evento2 = pastEvents
+        } else {
+            evento2 = catCheckedEvents
+        }
+
+        evento2.forEach(evento => {
+            //pastEvents.forEach(evento => {
+            let nombre = evento.name.split(" ")
+            //console.log("nombre evento:", nombre)
+            for (let i = 0; i < nombre.length; i++) {
+                if (nombre[i].toLowerCase() == textoAbuscar.value.toLowerCase()) {
+                    encontrados.push(evento)
+                    console.log('categoria:', evento.category)
+
+                    let categoriaElementoEncontrado = document.getElementById(evento.category)
+                    // console.log(categoriaElementoEncontrado)
+                    categoriaElementoEncontrado.setAttribute("checked", "true")
+                    // console.log(categoriaElementoEncontrado.checked)
+
+                    respuesta = "si"
+                } 
+            }
+        })
+
+        if (respuesta == 'no') {
+            alert("NO tenemos ningun EVENTO con ese NOMBRE ...")
+        } else {
+            borrarCards()
+            cards(encontrados)
+            console.log(encontrados)
+            document.getElementById("search").setAttribute("disabled", "true")
+            document.getElementById("search").setAttribute("placeholder", "")
+            document.getElementById("botonBuscar").setAttribute("type", "button")
+            document.getElementById("botonBuscar").innerHTML = "return"
+            document.getElementById("botonBuscar").setAttribute("onclick", "location.reload()")
+        }
+
+        textoAbuscar.value = ""
+
+    }
+
 }
 
 
 
-/*
-let imagen = document.getElementById("imagen")
-imagen.setAttribute("src",events[0].image)
+// agrego las CATEGORIAS   ====================================================================================================================
+categorias(pastEvents)
 
-let nombre = document.getElementById("nombre")
-nombre.innerHTML = events[0].name
 
-let descripcion = document.getElementById("descripcion")
-descripcion.innerHTML = events[0].description
+// BUSQUEDA de eventos   =====================================================================================================================
+// capturo el BOTON de busqueda y el TEXTO a buscar
+let botonBuscar = document.getElementById('botonBuscar')
+let textoAbuscar = document.getElementById('search')
+botonBuscar.addEventListener('click', buscar)
 
-let precio = document.getElementById("precio")
-precio.innerHTML = "$ " + events[0].price
-*/
+
+
+// agrego las CARDS   ========================================================================================================================
+cards(pastEvents)

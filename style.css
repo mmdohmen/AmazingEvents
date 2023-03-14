@@ -4,6 +4,9 @@
     box-sizing: border-box;
 }
 
+.container-fluid {
+    padding: 0;
+}
 
 /* ENCABEZADO -------------------------------------------------------------------------------*/
 
@@ -12,7 +15,7 @@ header {
 }
 
 .menu {
-    border: 1px dashed black;
+    border: 1px dashed #EA047E;
     padding: 9px;
     background-color: #EA047E;
     display: flex;
@@ -48,7 +51,7 @@ button.navbar-toggler {
 }
 
 .titulo {
-    border: 1px dashed black;
+    border: 1px dashed #FF6D28;
     color: white;
     padding: 9px;
     display: flex;
@@ -67,7 +70,7 @@ button.navbar-toggler {
 }
 
 .checksearch {
-    border: 1px dashed black;
+    border-bottom: 3px solid #EA047E;
     padding: 9px;
     display: flex;
     justify-content: space-between;
@@ -82,11 +85,15 @@ button.navbar-toggler {
 .input-text {
     margin: auto;
     display: inline-block;
-    
+}
+
+.form-check-label {
+    margin-right: 25px;
 }
 
 .eventos {
-    border: 1px dashed black;
+    border: 1px dashed white;
+    padding: 25px 0px;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -153,13 +160,15 @@ th, td {
     border: 1px solid black;
     margin: 16px;
     text-align: center;
+    height: 90%;
+    
 }
 
 
 /* FOOTER --------------------------------------------------------------------------------- */
 
 footer {
-    border: 1px dashed black;
+    border: 1px dashed #FCE700;
     background-color: #FCE700;
     color: black;
     padding: 25px;
@@ -179,4 +188,10 @@ footer {
 
 .cohort>a {
     color: black;
+}
+
+
+/* pagina EVENTO --------------------------------------------------------------------------------- */
+#evento {
+    height: 500px;
 }
