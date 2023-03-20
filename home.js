@@ -1,260 +1,150 @@
-// array de DATOS en el archivo data.js   ==>   data.events[]
+async function traerDatos() {
+    try {
+        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")   // CONSULTA a la URL cuya respuesta (promesa) guardo en 'response'
+        console.log("response:", response)
+        const datos = await response.json()                                              // guardo esa respuesta 'response' en formato JSON (texto)
+        console.log('datos:', datos)
+        let amazingEvents = datos.events                                                   // guardo los datos correspondientes a la clave 'results'
+        console.log("amazingEvents:", amazingEvents)
+        return amazingEvents
+    } catch (error) {
+        console.log("ERROR !!!:", error)                                            // muestro el ERROR ocurrido en alguna de las PROMESAS
+    }
+}
+
+traerDatos()
+
+
+
+// array de datos en el archivo data.js   ==>   data.events[]
 const events = data.events
-//console.log(events)
-
-let homeEvents = events
-console.log('homeEvents:', homeEvents)
-
-
-// array de CATEGORIAS   =========================================================================================================================
-let categories = []
-let catChecked = []
-let catCheckedEvents = []
+const homeEvents = events
+//const homeEvents = traerDatos()
+console.log("homeEvents:", homeEvents)
 
 
 
-// FUNCIONES   ==================================================================================================================================
-function categorias(eventos) {
-    eventos.forEach(element => {
-        if (categories.some(category => category == element.category)) {
-            //console.log("categoria existente")
-        }
-        else {
-            categories.push(element.category)
-        }
-    });
-    console.log('categorias:', categories)
-
-    // capturo al contenedor de CATEGORIAS del DOM
-    let categoriasDOM = document.getElementById("category")
-
-    // recorro el array de categorias
-    for (let category of categories) {
-
-        // creo una CATEGORIA
-        let categoria = document.createElement("div")
-        categoria.setAttribute("class", "form-check")
-
-        // INPUT de la categoria
-        let input = document.createElement("input")
-        input.setAttribute("class", "form-check-input")
-        input.setAttribute("type", "checkbox")
-        input.setAttribute("value", category)
-        input.setAttribute("id", category)
-        input.addEventListener('click', checked)
-        categoria.appendChild(input)
-
-        // LABEL de la categoria
-        let label = document.createElement("label")
-        label.setAttribute("class", "form-check-label")
-        label.setAttribute("for", category)
-        label.innerHTML = category
-        categoria.appendChild(label)
-
-        //console.log(categoria)
-
-        // agrego la categoria al contenedor
-        categoriasDOM.appendChild(categoria)
-
-    }
-
-}
-
-function unchecked() {
-     console.log(categorias)
-}
-
-function cards(eventos) {
-
-    // capturo al contenedor de EVENTOS del DOM   ====================================================================================================
-    let eventosDOM = document.getElementById("eventos")
-
-    // recorro el ARRAY de datos
-    for (let evento of eventos) {
-
-        // creo una CARD
-        let card = document.createElement("div")
-        card.setAttribute("class", "card")
-        card.style.width = "18rem"
-
-        // IMAGEN de la card
-        let img = document.createElement("img")
-        img.setAttribute("src", evento.image)
-        img.setAttribute("class", "card-img-top")
-        card.appendChild(img)
-
-        // BODY de la CARD (contiene al TITULO, DESCRIPCION, PRECIO y BOTON)
-        let cardBody = document.createElement("div")
-        cardBody.setAttribute("class", "card-body")
-        card.appendChild(cardBody)
-
-        // TITULO de la card
-        let h5 = document.createElement("h5")
-        h5.setAttribute("class", "card-title")
-        h5.innerHTML = evento.name
-        cardBody.appendChild(h5)
-
-        // DESCRIPCION de la card
-        let p = document.createElement("p")
-        p.setAttribute("class", "card-text")
-        p.innerHTML = evento.description
-        cardBody.appendChild(p)
-
-        // FILA de la card
-        let row = document.createElement("div")
-        row.setAttribute("class", "row")
-        cardBody.appendChild(row)
-
-        // COLUMNAS
-        let colPrecio = document.createElement("div")
-        colPrecio.setAttribute("class", "col")
-        let price = document.createElement("p")
-        price.innerHTML = "$ " + evento.price
-        colPrecio.appendChild(price)
-        row.appendChild(colPrecio)
-
-        let colBoton = document.createElement("div")
-        colBoton.setAttribute("class", "col")
-        let boton = document.createElement("a")
-        boton.setAttribute("href", `./evento.html?id=${evento._id}`)
-        boton.setAttribute("class", "btn btn-light")
-        boton.innerHTML = "see more"
-        colBoton.appendChild(boton)
-        row.appendChild(colBoton)
-
-        // agrego la CARD al contenedor
-        eventosDOM.appendChild(card)
-
-    }
-
-}
-
-function borrarCards() {
-    let main = document.getElementById("main")
-    //console.log(main)
-    let eventos = document.getElementById("eventos")
-    //console.log(eventos)
-    main.removeChild(eventos)
-    let div = document.createElement("div")
-    div.setAttribute("class", "eventos")
-    div.setAttribute("id", "eventos")
-    main.appendChild(div)
-    //console.log(main)
-}
-
-function checked(e) {
-
-    // borro las cards del DOM
-    borrarCards()
-
-    // categorias CHECKEADAS
-    if (catChecked.length == 0) {
-        //console.log('if linea 28')
-        catCheckedEvents = []
-
-    }
-
-    //console.log(e.target.value)
-    if (e.target.checked) {
-        catChecked.push(e.target.value)
-        //console.log('checked:', catChecked)
-        for (let evento of homeEvents) {
-            if (evento.category == e.target.value) {
-                catCheckedEvents.push(evento)
-
-            }
-        }
-    } else {
-        //console.log('quitar', e.target.value)
-        catChecked = catChecked.filter(elemento => elemento != e.target.value)
-        catCheckedEvents = catCheckedEvents.filter(evento => evento.category != e.target.value)
-
-        if (catChecked.length == 0) {
-            //catCheckedEvents = homeEvents
-            location.reload()
-        }
-        //console.log('checked:', catChecked)
-    }
-    console.log('catCheckedEvents:', catCheckedEvents)
-    console.log('catChecked:', catChecked)
+// capturo los contenedores/elementos del DOM
+const eventosDOM = document.getElementById("eventos")
+const categoriasDOM = document.getElementById("category")
+const inputDOM = document.getElementById("search")
+const botonDOM = document.getElementById("botonBuscar")
 
 
-    // agrego las CARDS de las categorias checkeadas
-    cards(catCheckedEvents)
+// EVENTOS   ===================================================================================================================================
+// BUSCAR por TEXTO
+// botonDOM.addEventListener("click", (e) => {
+//     e.preventDefault()
+//     let arrayFiltrado = buscarTexto(homeEvents, inputDOM.value)
+//     cards(arrayFiltrado)
+// })
+inputDOM.addEventListener("input", () => {
+    // let arrayFiltrado = buscarTexto(homeEvents, inputDOM.value)
+    // cards(arrayFiltrado)
+    buscar()
+} )
 
+// BUSCAR por CATEGORIA
+categoriasDOM.addEventListener('change', () => {
+    // let arrayFiltrado = buscarCategoriasCheckeadas(homeEvents)
+    // cards(arrayFiltrado)
+    buscar()
 
-}
-
-function buscar(e) {
-    e.preventDefault()                   // cancelo el evento (envio de datos del formulario)
-    console.log("texto a buscar:", textoAbuscar.value)
-
-    if (textoAbuscar.value == "") {
-        location.reload()
-        // borrarCards()
-        // textoAbuscar.value = ""
-        // cards(homeEvents)
-    } else {
-        let respuesta = 'no'
-        let encontrados = []
-
-        if (catCheckedEvents.length == 0) {
-            evento2 = homeEvents
-        } else {
-            evento2 = catCheckedEvents
-        }
-
-        evento2.forEach(evento => {
-            //homeEvents.forEach(evento => {
-            let nombre = evento.name.split(" ")
-            //console.log("nombre evento:", nombre)
-            for (let i = 0; i < nombre.length; i++) {
-                if (nombre[i].toLowerCase() == textoAbuscar.value.toLowerCase()) {
-                    encontrados.push(evento)
-                    console.log('categoria:', evento.category)
-
-                    let categoriaElementoEncontrado = document.getElementById(evento.category)
-                    // console.log(categoriaElementoEncontrado)
-                    categoriaElementoEncontrado.setAttribute("checked", "true")
-                    // console.log(categoriaElementoEncontrado.checked)
-
-                    respuesta = "si"
-                } 
-            }
-        })
-
-        if (respuesta == 'no') {
-            alert("NO tenemos ningun EVENTO con ese NOMBRE ...")
-        } else {
-            borrarCards()
-            cards(encontrados)
-            console.log(encontrados)
-            document.getElementById("search").setAttribute("disabled", "true")
-            document.getElementById("search").setAttribute("placeholder", "")
-            document.getElementById("botonBuscar").setAttribute("type", "button")
-            document.getElementById("botonBuscar").innerHTML = "return"
-            document.getElementById("botonBuscar").setAttribute("onclick", "location.reload()")
-        }
-
-        textoAbuscar.value = ""
-
-    }
-
-}
+})
 
 
 
-// agrego las CATEGORIAS   ====================================================================================================================
+// llamado a funciones   ======================================================================================================================
+cards(homeEvents)
 categorias(homeEvents)
 
 
-// BUSQUEDA de eventos   =====================================================================================================================
-// capturo el BOTON de busqueda y el TEXTO a buscar
-let botonBuscar = document.getElementById('botonBuscar')
-let textoAbuscar = document.getElementById('search')
-botonBuscar.addEventListener('click', buscar)
 
 
+// FUNCIONES   ================================================================================================================================
+function cards(arrayDatos) {
+    if (arrayDatos.length == 0) {
+        eventosDOM.innerHTML = ""
+        Swal.fire('NO HAY EVENTOS con el texto ingresado').then(resultado => {
+            if(resultado.value) {window.location.reload()}
+        }) 
+    }
+    let cards = ""
+    arrayDatos.forEach(element => {
+        cards += `
+        <div class="card" style="width: 18rem;">
+            <img src="${element.image}" class="card-img-top" alt="..." id="imagen">
+            <div class="card-body">
+                <h5 class="card-title" id="nombre">${element.name}</h5>
+                <p class="card-text" id="descripcion">${element.description}</p>
+                <div class="row">
+                    <div class="col">
+                        <p id="precio">$ ${element.price}</p>
+                    </div>
+                    <div class="col"><a href="./evento.html?id=${element._id}" class="btn btn-light">see more</a></div>
+                </div>
+            </div>
+        </div>`
+    });
+    eventosDOM.innerHTML = cards
+}
 
-// agrego las CARDS   ========================================================================================================================
-cards(homeEvents)
+function categorias(arrayDatos) {
+    let arrayCategorias = []
+    arrayDatos.forEach(element => {
+        arrayCategorias.push(element.category)
+    })
+    console.log("categorias:", arrayCategorias)
+    // elimino los elementos duplicados usando una coleccion/objeto SET
+    const categoriaSET = new Set(arrayCategorias)
+    console.log("categoriaSET:", categoriaSET)
+    // agrego las categorias al DOM
+    categoriaSET.forEach(element => {
+        categoriasDOM.innerHTML += `
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="${element}" id="${element}">
+            <label class="form-check-label" for="${element}">${element}</label>
+        </div>`
+    })
+}
+
+function buscarTexto(arrayDatos, texto) {
+    let arrayFiltrado = arrayDatos.filter(elemento => elemento.name.toLowerCase().includes(texto.toLowerCase()))
+    return arrayFiltrado
+}
+
+function buscarCategoriasCheckeadas(arrayDatos) {
+    // CAPTURO todos los CHECKBOX en una NodeList() o coleccion de NODOS (objetos)
+    let checkboxes = document.querySelectorAll("input[type='checkbox']")
+    //console.log("checkboxes:", checkboxes)
+
+    // TRANSFORMO la NodeList() en un ARRAY
+    let arrayCheckboxes = Array.from(checkboxes)
+    //console.log("array de checkboxes:", arrayCheckboxes)
+
+    // SEPARO los CHECKBOX q estan CHECKED
+    let checkboxesCheckeados = arrayCheckboxes.filter(elemento => elemento.checked)
+    console.log("checkboxes Checkeados:", checkboxesCheckeados)
+
+    // si NO HAY elementos CHECKED
+    if (checkboxesCheckeados.length == 0) {
+        return arrayDatos
+    }
+
+    // armo un ARRAY con el NOMBRE/value de los CHECKBOX/CATEGORIAS q estan CHECKED
+    let catCheckeadas = checkboxesCheckeados.map(elemento => elemento.value)
+    console.log("categorias Checkeadas:", catCheckeadas)
+    
+    // armo el ARRAY de DATOS que tienen las CATEGORIAS CHECKEaDas
+    let arrayFiltrado = arrayDatos.filter(elemento => catCheckeadas.includes(elemento.category))
+    console.log("arrayFiltrado:", arrayFiltrado)
+
+    return arrayFiltrado
+
+}
+
+function buscar() {
+    let arrayFiltrado1 = buscarTexto(homeEvents, inputDOM.value)
+    let arrayFiltrado2 = buscarCategoriasCheckeadas(arrayFiltrado1)
+    cards(arrayFiltrado2)
+}
