@@ -1,25 +1,32 @@
-async function traerDatos() {
+// fetch to the API
+async function datosAPI() {
+
     try {
-        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")   // CONSULTA a la URL cuya respuesta (promesa) guardo en 'response'
+
+        // CONSULTA a la URL cuya respuesta (promesa) guardo en 'response'
+        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")   
         console.log("response:", response)
-        const datos = await response.json()                                              // guardo esa respuesta 'response' en formato JSON (texto)
-        console.log('datos:', datos)
-        let amazingEvents = datos.events                                                   // guardo los datos correspondientes a la clave 'results'
-        console.log("amazingEvents:", amazingEvents)
-        return amazingEvents
+
+        // guardo esa respuesta 'response' en formato JSON (texto)
+        const datosWeb = await response.json()                                           
+        console.log('datos WEB:', datosWeb)
+        
+        // guardo los DATOS de los EVENTOS en el ARRAY 'events'
+        const eventsWEB = data.events
+        console.log("eventsWEB:", eventsWEB)
+
     } catch (error) {
-        console.log("ERROR !!!:", error)                                            // muestro el ERROR ocurrido en alguna de las PROMESAS
+        console.log("ERROR !!!:", error)       // muestro el ERROR ocurrido en alguna de las PROMESAS
+        Swal.fire('NO se puede ACCEDER al SERVIDOR !!!...')
     }
 }
 
-traerDatos()
+datosAPI()
 
-
-
-// array de datos en el archivo data.js   ==>   data.events[]
+// uso los DATOS del array data.js creado con el json de la API p/ idependizarme del servidor
+// array de DATOS en el archivo data.js   ==>   data.events[]   =========================================================================
 const events = data.events
 const homeEvents = events
-//const homeEvents = traerDatos()
 console.log("homeEvents:", homeEvents)
 
 
