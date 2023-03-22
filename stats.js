@@ -4,13 +4,13 @@ async function estadisticas() {
     try {
 
         // CONSULTA a la URL cuya respuesta (promesa) guardo en 'response'
-        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")   
+        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")
         console.log("response:", response)
 
         // guardo esa respuesta 'response' en formato JSON (texto)
-        const datosWeb = await response.json()                                           
+        const datosWeb = await response.json()
         console.log('datos WEB:', datosWeb)
-        
+
         // guardo los DATOS de los EVENTOS en el ARRAY 'events'
         const events = data.events
         console.log("events:", events)
@@ -92,6 +92,75 @@ async function estadisticas() {
         })
 
 
+
+        // FUNCIONES   ================================================================================================================================
+        function eventStatistics(arrayEventos) {
+            let lowest = arrayEventos[0]
+            console.log('lowest:', lowest.name, '-', lowest.attendance * 100)
+
+            let highest = lowest
+            let larger = lowest
+            arrayEventos.forEach(element => {
+                if (element.assistance) {
+                    if (element.attendance > highest.attendance) { highest = element }
+                }
+                if (element.capacity > larger.capacity) { larger = element }
+            })
+            console.log('highest:', highest.name, '-', highest.attendance * 100)
+            console.log('larger:', larger.name, '-', larger.capacity)
+
+            eventStats.innerHTML = `<td>${highest.name} - ${highest.attendance * 100} %</td>
+                           <td>${lowest.name} - ${lowest.attendance * 100} %</td>
+                           <td>${larger.name} - ${larger.capacity}</td>`
+        }
+
+        function categoriaStatistics(arrayEventos) {
+
+            // declaro un array que guardara los datos buscados
+            let catStats = []
+
+            // busco las CATEGORIAS existentes
+            let arrayCategorias = []
+            arrayEventos.forEach(element => {
+                arrayCategorias.push(element.category)
+            })
+            console.log("categorias:", arrayCategorias)
+            // elimino los elementos duplicados usando una coleccion/objeto SET
+            const categoriaSET = new Set(arrayCategorias)
+            console.log("categoriaSET:", categoriaSET)
+
+            // calculo las ESTADISTICAS p/ c/ categoria
+            categoriaSET.forEach(categoria => {
+
+                let revenue = 0
+                let attendance = 0, cantidad = 0
+                arrayEventos.forEach(evento => {
+                    if (evento.category == categoria) {
+                        // revenue
+                        if (evento.assistance) {
+                            revenue += evento.price * evento.assistance
+                        } else {
+                            revenue += evento.price * evento.estimate
+                        }
+                        // attendance
+                        attendance += evento.attendance
+                        cantidad += 1
+                    }
+                })
+                console.log(categoria, '- $', revenue, '-', (attendance / cantidad * 100).toFixed(2), '%', cantidad)
+
+                // guardo los datos en el array
+                catStats.push({ cat: categoria, rev: revenue, att: (attendance / cantidad * 100).toFixed(2) })
+
+            })
+
+            console.log(catStats)
+
+            return catStats
+
+        }
+
+
     } catch (error) {
         console.log("ERROR !!!:", error)       // muestro el ERROR ocurrido en alguna de las PROMESAS
         Swal.fire('NO se puede ACCEDER al SERVIDOR !!!...')
@@ -99,74 +168,4 @@ async function estadisticas() {
 }
 
 
-
 estadisticas()
-
-
-
-// FUNCIONES   ================================================================================================================================
-function eventStatistics(arrayEventos) {
-    let lowest = arrayEventos[0]
-    console.log('lowest:', lowest.name, '-', lowest.attendance * 100)
-
-    let highest = lowest
-    let larger = lowest
-    arrayEventos.forEach(element => {
-        if (element.assistance) {
-            if (element.attendance > highest.attendance) { highest = element }
-        }
-        if (element.capacity > larger.capacity) { larger = element }
-    })
-    console.log('highest:', highest.name, '-', highest.attendance * 100)
-    console.log('larger:', larger.name, '-', larger.capacity)
-
-    eventStats.innerHTML = `<td>${highest.name} - ${highest.attendance * 100} %</td>
-                           <td>${lowest.name} - ${lowest.attendance * 100} %</td>
-                           <td>${larger.name} - ${larger.capacity}</td>`
-}
-
-function categoriaStatistics(arrayEventos) {
-
-    // declaro un array que guardara los datos buscados
-    let catStats = []
-
-    // busco las CATEGORIAS existentes
-    let arrayCategorias = []
-    arrayEventos.forEach(element => {
-        arrayCategorias.push(element.category)
-    })
-    console.log("categorias:", arrayCategorias)
-    // elimino los elementos duplicados usando una coleccion/objeto SET
-    const categoriaSET = new Set(arrayCategorias)
-    console.log("categoriaSET:", categoriaSET)
-
-    // calculo las ESTADISTICAS p/ c/ categoria
-    categoriaSET.forEach(categoria => {
-
-        let revenue = 0
-        let attendance = 0, cantidad = 0
-        arrayEventos.forEach(evento => {
-            if (evento.category == categoria) {
-                // revenue
-                if (evento.assistance) {
-                    revenue += evento.price * evento.assistance
-                } else {
-                    revenue += evento.price * evento.estimate
-                }
-                // attendance
-                attendance += evento.attendance
-                cantidad += 1
-            }
-        })
-        console.log(categoria, '- $', revenue, '-', (attendance / cantidad * 100).toFixed(2), '%', cantidad)
-
-        // guardo los datos en el array
-        catStats.push({ cat: categoria, rev: revenue, att: (attendance / cantidad * 100).toFixed(2) })
-
-    })
-
-    console.log(catStats)
-
-    return catStats
-
-}
