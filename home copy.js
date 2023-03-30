@@ -1,35 +1,37 @@
-// array de datos en el archivo data.js   ==>   data.events[]
-const events = data.events
+// fetch to the API
+async function datosAPI() {
 
-// capturo la FECHA ACTUAL   ===========================================================================================================
-const fecha = data.currentDate
-const anio = fecha[2] + fecha[3]
-const mes = fecha[5] + fecha[6]
-const dia = fecha[8] + fecha[9]
-console.log('año:', anio, '- mes:', mes, '- dia:', dia)
+    try {
 
-// creo un ARRAY con los DATOS de los EVENTOS FUTUROS
-const pastEvents = []
+        // CONSULTA a la URL cuya respuesta (promesa) guardo en 'response'
+        const response = await fetch(" https://mindhub-xj03.onrender.com/api/amazing")   
+        console.log("response:", response)
 
-for (let evento of events) {
+        // guardo esa respuesta 'response' en formato JSON (texto)
+        const datosWeb = await response.json()                                           
+        console.log('datos WEB:', datosWeb)
+        
+        // guardo los DATOS de los EVENTOS en el ARRAY 'events'
+        const eventsWEB = data.events
+        console.log("eventsWEB:", eventsWEB)
 
-    let anioEvento = parseInt(evento.date[2] + evento.date[3])
-    let mesEvento = parseInt(evento.date[5] + evento.date[6])
-    let diaEvento = parseInt(evento.date[8] + evento.date[9])
-
-    if (anioEvento < anio) {
-        pastEvents.push(evento) 
-    } else if (anioEvento == anio) {   
-        if (mesEvento < mes || (mesEvento == mes && diaEvento <= dia)) {
-            upcomingEvents.push(evento)
-        }
+    } catch (error) {
+        console.log("ERROR !!!:", error)       // muestro el ERROR ocurrido en alguna de las PROMESAS
+        Swal.fire('NO se puede ACCEDER al SERVIDOR !!!...')
     }
-
 }
 
-console.log(pastEvents)
+datosAPI()
 
-// capturo al contenedores/elementos del DOM
+// uso los DATOS del array data.js creado con el json de la API p/ idependizarme del servidor
+// array de DATOS en el archivo data.js   ==>   data.events[]   =========================================================================
+const events = data.events
+const homeEvents = events
+console.log("homeEvents:", homeEvents)
+
+
+
+// capturo los contenedores/elementos del DOM
 const eventosDOM = document.getElementById("eventos")
 const categoriasDOM = document.getElementById("category")
 const inputDOM = document.getElementById("search")
@@ -40,18 +42,18 @@ const botonDOM = document.getElementById("botonBuscar")
 // BUSCAR por TEXTO
 // botonDOM.addEventListener("click", (e) => {
 //     e.preventDefault()
-//     let arrayFiltrado = buscarTexto(pastEvents, inputDOM.value)
+//     let arrayFiltrado = buscarTexto(homeEvents, inputDOM.value)
 //     cards(arrayFiltrado)
 // })
 inputDOM.addEventListener("input", () => {
-    // let arrayFiltrado = buscarTexto(pastEvents, inputDOM.value)
+    // let arrayFiltrado = buscarTexto(homeEvents, inputDOM.value)
     // cards(arrayFiltrado)
     buscar()
 } )
 
 // BUSCAR por CATEGORIA
 categoriasDOM.addEventListener('change', () => {
-    // let arrayFiltrado = buscarCategoriasCheckeadas(pastEvents)
+    // let arrayFiltrado = buscarCategoriasCheckeadas(homeEvents)
     // cards(arrayFiltrado)
     buscar()
 
@@ -60,8 +62,8 @@ categoriasDOM.addEventListener('change', () => {
 
 
 // llamado a funciones   ======================================================================================================================
-cards(pastEvents)
-categorias(pastEvents)
+cards(homeEvents)
+categorias(homeEvents)
 
 
 
@@ -70,7 +72,7 @@ categorias(pastEvents)
 function cards(arrayDatos) {
     if (arrayDatos.length == 0) {
         eventosDOM.innerHTML = ""
-        Swal.fire('there are NO EVENTS with the text entered ...').then(resultado => {
+        Swal.fire('NO HAY EVENTOS con el texto ingresado').then(resultado => {
             if(resultado.value) {window.location.reload()}
         }) 
     }
@@ -149,7 +151,7 @@ function buscarCategoriasCheckeadas(arrayDatos) {
 }
 
 function buscar() {
-    let arrayFiltrado1 = buscarTexto(pastEvents, inputDOM.value)
+    let arrayFiltrado1 = buscarTexto(homeEvents, inputDOM.value)
     let arrayFiltrado2 = buscarCategoriasCheckeadas(arrayFiltrado1)
     cards(arrayFiltrado2)
 }

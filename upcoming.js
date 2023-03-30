@@ -70,7 +70,7 @@ categorias(upcomingEvents)
 function cards(arrayDatos) {
     if (arrayDatos.length == 0) {
         eventosDOM.innerHTML = ""
-        Swal.fire('NO HAY EVENTOS con el texto ingresado').then(resultado => {
+        Swal.fire('there are NO EVENTS with the text entered ...').then(resultado => {
             if (resultado.value) { window.location.reload() }
         })
     }

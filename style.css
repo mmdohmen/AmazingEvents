@@ -12,7 +12,7 @@ header {
 }
 
 .menu {
-    border: 1px dashed black;
+    border: 1px solid #EA047E;
     padding: 9px;
     background-color: #EA047E;
     display: flex;
@@ -48,7 +48,7 @@ button.navbar-toggler {
 }
 
 .titulo {
-    border: 1px dashed black;
+    border: 1px solid #FF6D28;
     color: white;
     padding: 9px;
     display: flex;
@@ -67,7 +67,7 @@ button.navbar-toggler {
 }
 
 .checksearch {
-    border: 1px dashed black;
+    border-bottom: 1px solid black;
     padding: 9px;
     display: flex;
     justify-content: space-between;
@@ -90,7 +90,7 @@ button.navbar-toggler {
 }
 
 .eventos {
-    border: 1px dashed black;
+    border: 1px dashed white;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -122,6 +122,7 @@ div.card>img {
 
 #form-contact {
     width: 50vw;
+    height: 66vh;
     margin-left: 25vw;
 }
 
@@ -150,11 +151,12 @@ tr, td {
 
 #evento-img {
     object-fit: cover;
-    width: 90%;
-    height: 90%;
-    position: relative;
+    width:95%;
+    height: 93%;
+    margin: 16px; 
+    /* position: relative;
     top: 16px;
-    left: 16px;
+    left: 16px; */
     box-shadow: -6px -6px 12px gray;
 }
 
@@ -168,7 +170,7 @@ tr, td {
 /* FOOTER --------------------------------------------------------------------------------- */
 
 footer {
-    border: 1px dashed black;
+    border: 1px solid FCE700;
     background-color: #FCE700;
     color: black;
     padding: 25px;
@@ -188,4 +190,5 @@ footer {
 
 .cohort>a {
     color: black;
+    text-decoration: none;
 }
